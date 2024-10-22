@@ -1,0 +1,23 @@
+.navbar{
+    border-bottom-color: #e4e2e0;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e4e2e0;
+}
+
+.list:hover{
+         border-bottom-color: #2557a7;
+}
+
+
+.btn{
+    background-color: #2557a7;
+    color: #ffffff;
+    height: 43px;
+    border: .125rem solid #2557a7;
+padding: 10px;
+border-radius: 5px;
+}
+
+.span{
+    border-right-color: #e4e2e0;
+}
