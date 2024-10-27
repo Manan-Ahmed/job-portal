@@ -1,8 +1,6 @@
 "use client"
 
-type CompanyInfoType = {
-  name: string; // Adjust as per the actual structure of companyinfo
-};
+
 
 type CompanyJobCardType = {
     companyinfo:string,jobTitle:string,jobType:string,jobDescription:string,

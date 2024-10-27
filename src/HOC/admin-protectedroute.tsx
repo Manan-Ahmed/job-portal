@@ -21,7 +21,7 @@ const route = useRouter()
            route.push('/job seeker')
          }
         
- },[user])
+ },[])
 
 
     return(

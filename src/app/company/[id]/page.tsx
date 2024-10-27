@@ -24,7 +24,7 @@ export default function EditCard({ params: { id } }: EditCardProps) {
 
     useEffect(() => {
         fetchJob();
-    }, [id]); // Fetch job again if id changes
+    }, []); // Fetch job again if id changes
 
     const fetchJob = async () => {
         const docRef = doc(db, "jobs", id);
