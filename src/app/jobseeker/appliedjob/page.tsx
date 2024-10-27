@@ -1,6 +1,7 @@
 "use client"
 
 import ApplyJobCard from "@/app/component/apply-job-card"
+import Loading from "@/app/component/loading"
 import { useAuthContext } from "@/app/context/authcontext"
 import { auth, db } from "@/app/firebase/firebaseConfig"
 import { collection, doc, DocumentData, getDoc, onSnapshot, query, where } from "firebase/firestore"
@@ -11,45 +12,54 @@ export default function AppliedJob(){
 
     const [applyjob,setApplyJob] = useState<DocumentData[]>([])
     const {user} = useAuthContext()!
-    let currentUser = auth.currentUser?.uid
+    const currentUser = auth.currentUser?.uid
+    const [loading,setLoading] = useState(true)
 
         useEffect(()=>{
             if(currentUser){
-                fetchjob(currentUser)
+                fetchjob()
+                setLoading(loading)
     
+            }else{
+                setLoading(false)
             }
         },[user])
     
-        const fetchjob = (uid:string)=>{
-            let jobsRef = collection(db,"applications")
+        const fetchjob = ()=>{
+            const  jobsRef = collection(db,"applications")
     
-            let condition = where('jobseekeruid','==',currentUser)
+            const  condition = where('jobseekeruid','==',currentUser)
     
-            let q = query(jobsRef,condition)
+            const  q = query(jobsRef,condition )
     
-         let unsub =  onSnapshot(q,async (docSnapShot)=>{
-                  console.log(docSnapShot);
-                  let alljobs = docSnapShot.docs.map(async(job)=>{
-    
-                    let jobid = job.data().jobdocid
-                     
-                    let docRef = doc(db,"jobs",jobid)
-                   let jobs =   await getDoc(docRef)    
-                          
-                   console.log(jobs.id);
-                   
-                        let obj = {
+       onSnapshot(q,async (docSnapShot)=>{
+                  const alljobs = docSnapShot.docs.map(async(job)=>{
+                 
+                    
+                    const applydata = job.data()
+                    const jobid = job.data().jobdocid
+                    
+                   const applyRef = doc(db,"jobs",applydata.jobdocid)
+
+                       const jobs =  await getDoc(applyRef)
+                      
+                       const compRef = doc(db,"users",applydata.comanyid)
+
+                       const company =  await getDoc(compRef)
+                        const obj = {
+                             
                             ...jobs.data(),
+                            companyinfo: company.data(),
                             jobid
                         }
-                        console.log(obj);
+                        console.log('job',obj);
                         
     return obj
                      
                          
                      
          })
-                  let resolveallpromise = await Promise.all(alljobs)
+                  const resolveallpromise = await Promise.all(alljobs)
                   setApplyJob(resolveallpromise)
             })
     
@@ -60,10 +70,11 @@ export default function AppliedJob(){
            <h1>Applied Job</h1>
 
            {
-            applyjob && applyjob.map(({jobTitle,jobType,jobDescription,address,skills,jobid,salaryRange},i)=>(
+            loading ? <Loading/> :
+            applyjob && applyjob.map(({companyinfo,jobTitle,jobType,jobDescription,address,skills,jobid,salaryRange})=>(
                  <ApplyJobCard
-                    key={jobid} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription}
-                    docId={jobid} address={address} skills={skills} salaryRange={salaryRange} companyinfo={undefined}   />
+                    key={jobid} companyinfo={companyinfo.name} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription}
+                    docId={jobid} address={address} skills={skills} salaryRange={salaryRange} />
             ))
            }
         </>

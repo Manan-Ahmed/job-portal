@@ -2,6 +2,7 @@
 
 import { deleteDoc, doc, updateDoc } from "firebase/firestore"
 import { db } from "../firebase/firebaseConfig"
+import { MdDelete } from "react-icons/md"
 
 
 
@@ -20,18 +21,18 @@ export default function AllUsres(
 
 
   const deletedUser = async()=>{
-    let docRef = doc(db,"users",uid)
+    const docRef = doc(db,"users",uid)
     try{
     await deleteDoc(docRef);
     console.log('data  delete');
 }catch(e){
-    console.log('data not delete');
+    console.log('data not delete',e);
     
 }  
 }
 
 const blockUser = ()=>{
-    let docRef = doc(db,"users",uid)
+    const docRef = doc(db,"users",uid)
     if(block){
            updateDoc(docRef,{block: false})
     }else{
@@ -42,7 +43,6 @@ const blockUser = ()=>{
     return(
        <>
    
-      {/* row 1 */}
       <tr>
         <th>{index + 1}</th>
         <td>
@@ -54,19 +54,14 @@ const blockUser = ()=>{
           </div>
         </div>
       </td>
-        {/* <td>{name}</td>
-        <td>{email}</td> */}
+       
         <td>{role}</td>
         <td>
-            <button onClick={deletedUser}>Delete</button>
-            <button onClick={blockUser}>
+            <button onClick={deletedUser}> <MdDelete size={20}/>
+            </button>
+            <button onClick={blockUser}  className="w-14 rounded">
                 {block ? 'UnBlock' : "Block"}</button>
 
-        {/* <select className="select select-bordered w-full max-w-xs">
-          <option selected>Select Action</option>
-          <option>Delete</option>
-          <option>Block</option>
-        </select> */}
             </td>
               </tr>
       

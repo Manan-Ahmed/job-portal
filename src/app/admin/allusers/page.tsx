@@ -2,28 +2,25 @@
 
 import AllUsres from "@/app/component/company-allusers"
 import { db } from "@/app/firebase/firebaseConfig"
-import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore"
+import { collection, DocumentData, onSnapshot } from "firebase/firestore"
 import { useEffect, useState } from "react"
 
 export default function AllUsers(){
-let [allUsers,setAllUsers] = useState<DocumentData[]>()
+const [allUsers,setAllUsers] = useState<DocumentData[]>()
     useEffect(()=>{
         fetchJobs()
     },[])
 
     const fetchJobs = ()=>{
         const jobRef = collection(db,"users")
-// let condition = where('block','!=',false)
 
-// let q = query(jobRef,condition)
-        let unsub = onSnapshot(jobRef,async(docSnapShot)=>{
-         let alluser =    docSnapShot.docs.map((user)=> ({...user.data()})
+        onSnapshot(jobRef,async(docSnapShot)=>{
+         const alluser =    docSnapShot.docs.map((user)=> ({...user.data()})
                        
 
                      
 
             )
-            console.log(alluser);
             
             setAllUsers(alluser )
 
@@ -32,13 +29,11 @@ let [allUsers,setAllUsers] = useState<DocumentData[]>()
     }
     return(
         <>
-         <h1>All Users</h1>
 
 
 
          <div className="overflow-x-auto">
   <table className="table">
-    {/* head */}
     <thead>
       <tr>
         <th></th>

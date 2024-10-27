@@ -2,77 +2,67 @@
 
 import { useEffect, useState } from "react"
 import { useAuthContext } from "../context/authcontext"
-import { auth, db } from "../firebase/firebaseConfig"
-import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, query, where } from "firebase/firestore"
+import {  db } from "../firebase/firebaseConfig"
+import { collection, doc, DocumentData, getDoc,onSnapshot } from "firebase/firestore"
 import JobCard from "../component/jobseekercard"
-import { useRouter } from "next/navigation"
-import ApplyJobCard from "../component/apply-job-card"
-import { relative } from "path"
-// import { useRouter } from "next/router"
+
 import style from './jobseeker.module.css'
+import Loading from "../component/loading"
 
 export default function JobSeeker(){
 const [myJob,setMyJob] = useState<DocumentData[]>([])
-let [applied,setApplied] = useState<boolean>(false)
-let [findJob,setFindJob] = useState('')
-let [serchjob,setSearchJob] = useState<DocumentData[]>([])
-let [show,setShow] = useState<boolean>(false)
-let [cardShow,setCardShow] = useState<boolean>(true)
-
-const route = useRouter()
+const [applied] = useState<boolean>(false)
+const [findJob,setFindJob] = useState('')
+const [serchjob,setSearchJob] = useState<DocumentData[]>([])
+const [show,setShow] = useState<boolean>(false)
+const [cardShow,setCardShow] = useState<boolean>(true)
+const [loading,setLoading] = useState(true)
     const {user} = useAuthContext()!
     useEffect(()=>{
+
         if(user){
+            setLoading(false)
             fetchjob()
 
+        }else{
+            setLoading(false)
+            
         }
     },[user])
 
     const fetchjob = ()=>{
-        let currentUser = auth.currentUser?.uid
-        let jobRef = collection(db,"jobs")
+        const jobRef = collection(db,"jobs")
 
 
 
-     let unsub =  onSnapshot(jobRef,async (docSnapShot)=>{
-              let alljobs = docSnapShot.docs.map(async(job)=>{
+     onSnapshot(jobRef,async (docSnapShot)=>{
+              const alljobs = docSnapShot.docs.map(async(job)=>{
 
-                let  jobdata = job.data()
-                let  jobuid = job.data().uid
+                const  jobdata = job.data()
+                const  jobuid = job.data().uid
 
 
-                      let docRef = doc(db,"users",jobuid)
+                      const docRef = doc(db,"users",jobuid)
 
-                     let jobCreaterinfo =  await  getDoc(docRef)
+                     const jobCreaterinfo =  await  getDoc(docRef)
 
-                    //  console.log('all jobs',jobCreaterinfo.data());
 
-                //      let q =  query(collection(db, "applications"), where("jobdocid", "==",job.id));
-                //        let querySnapshot = await getDocs(q)
-                         
-                //    let applyFeature =    querySnapshot.docs.map((jobs)=>{
-                //            let jobdocid =  jobs.data().jobdocid
-                //                if(jobdocid === job.id){
-                //                 setApplied(true)
-                //                }
-                               
-                //        })
                        
                     
-                     let obj = {
+                     const obj = {
                         ...jobdata,
                         companyinfo: jobCreaterinfo.data(),
                         docid: job.id
                      }
-                    //  console.log(obj);
+                     console.log(obj);
                      
                    return obj
      })
      try{
-        let resolveallpromise = await Promise.all(alljobs)
+        const resolveallpromise = await Promise.all(alljobs)
         setMyJob(resolveallpromise)
      }catch(e){
-        <div>data not found</div>
+        console.log(e)
      }
              
         })
@@ -85,7 +75,7 @@ const route = useRouter()
     const findjob =()=>{
         console.log(findJob);
         
-    let searchjobs =    myJob.filter((job)=>(
+    const searchjobs =    myJob.filter((job)=>(
                 job.jobTitle.toLowerCase() === findJob.toLowerCase()
                 
     ))
@@ -100,9 +90,6 @@ setShow(true)
         setCardShow(false)
     }
 
-    // const togglebtns = ()=>{
-    //     setCardShow(true)
-    // }
     return(
         <>
 
@@ -146,9 +133,9 @@ setShow(true)
 
 
 {
+loading ? <Loading/>
 
-
-
+:
 cardShow ?
 
 
@@ -174,7 +161,7 @@ cardShow ?
                 
          :
          myJob.map((
-            {jobTitle,jobType,jobDescription,address,companyinfo,skills,docid,salaryRange,uid},i)=>(
+            {jobTitle,jobType,jobDescription,address,companyinfo,skills,docid,salaryRange,uid})=>(
                     
         <JobCard key={docid} companyinfo={companyinfo.name} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription}
          docId={docid} address={address} skills={skills} salaryRange={salaryRange} companyuid={uid} applied={applied}/>

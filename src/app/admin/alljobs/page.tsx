@@ -6,18 +6,20 @@ import { collection, doc, DocumentData, getDoc, onSnapshot } from "firebase/fire
 import { useEffect, useState } from "react"
 
 export default function AllJobs(){
- let [alljobs,setAllJobs] = useState<DocumentData[]>()
+ const [alljobs,setAllJobs] = useState<DocumentData[]>()
     useEffect(()=>{
         fetchJobs()
+
+      
     },[])
 
     const fetchJobs = ()=>{
         const jobRef = collection(db,"jobs")
 
-        let unsub = onSnapshot(jobRef,async(docSnapShot)=>{
-       let alljobs =     docSnapShot.docs.map(async(job)=>{
-                  let jobsData = job.data()
-                  let jobsuid = job.data().uid
+         onSnapshot(jobRef,async(docSnapShot)=>{
+       const alljobs =     docSnapShot.docs.map(async(job)=>{
+                  const jobsData = job.data()
+                  const jobsuid = job.data().uid
 
                   
                   const docRef = doc(db,"users",jobsuid)
@@ -25,21 +27,20 @@ export default function AllJobs(){
                   const jobcreaterinfo = await getDoc(docRef)
                   console.log(jobcreaterinfo.data());
 
-let obj ={
+const obj ={
     ...jobsData,
    companyinfo: jobcreaterinfo.data(),
    docid: job.id
 }
 return obj
                })
-               let allpromiseresolve = await Promise.all(alljobs)
+               const allpromiseresolve = await Promise.all(alljobs)
                setAllJobs(allpromiseresolve)
 
         })
     }
     return(
         <>
-         <h1>All jobs</h1>
          {
       alljobs && alljobs.map(( 
     {jobTitle,jobType,address,docid,jobDescription,companyinfo,skills,salaryRange,hold,deleted})=>(
@@ -56,7 +57,6 @@ return obj
      salaryRange={salaryRange} 
      hold={hold}
      deleted={deleted}
-    //  companyuid={""} 
      applied={false}        
         
         

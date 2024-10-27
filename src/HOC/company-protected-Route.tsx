@@ -1,7 +1,6 @@
 import { useAuthContext } from "@/app/context/authcontext"
 import { useRouter } from "next/navigation"
-// import { useRouter } from "next/router"
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect } from "react"
 
 
 type CompanyProtectedRoutesType = {

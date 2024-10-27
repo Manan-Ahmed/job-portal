@@ -1,8 +1,6 @@
 import { useAuthContext } from "@/app/context/authcontext"
-import { auth } from "@/app/firebase/firebaseConfig"
-import { onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect } from "react"
 
 
 type UserProtectedRoutesType = {

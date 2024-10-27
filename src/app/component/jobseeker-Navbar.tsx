@@ -14,10 +14,6 @@ export default function JobSeekerNavbar() {
   };
 
 
-  const signin = ()=>{
-    route.push('/login')
-  }
-
   return (
 
     <>
@@ -58,16 +54,14 @@ export default function JobSeekerNavbar() {
 
             </ul>
         </div>
-        {/* <div > */}
         <div className="navbar-end">
           <div className="mr-4">
-            <button  onClick={signin} style={{color: '#2557a7'}}>Sign in </button>
+            <button  onClick={logOut} style={{color: '#2557a7'}}>logout</button>
         </div>
 
         </div>
         </div>
     </div>
-    {/* </div> */}
 
     </>
   )

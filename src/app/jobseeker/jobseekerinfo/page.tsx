@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react"
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "@/app/firebase/firebaseConfig";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/router";
 
 export default function JobSeekerInfo(){
   const [name,setName] = useState('')
@@ -37,10 +36,13 @@ const uploadTask = uploadBytesResumable(storageRef, pic!);
 
 uploadTask.on('state_changed', 
   (snapshot) => {
+  console.log(snapshot);
   
    
   }, 
   (error) => {
+    console.log(error);
+    
   }, 
   () => {
     
@@ -52,37 +54,13 @@ uploadTask.on('state_changed',
 );
 }
 
-// const uploadCV = ()=>{
-
-//   const storage = getStorage();
-//   const storageRef = ref(storage, `jobseeker/images${makeimageName()}`);
-  
-//   const uploadTask = uploadBytesResumable(storageRef, cv!);
-  
-  
-//   uploadTask.on('state_changed', 
-//     (snapshot) => {
-    
-     
-//     }, 
-//     (error) => {
-//     }, 
-//     () => {
-      
-//       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-//         console.log('File available at', downloadURL);
-//         setCvUrl(downloadURL)
-//       });
-//     }
-//   );
-//   }
 
 
   const savejobseekerinfo = async ()=>{
-    let docId = auth.currentUser?.uid
-    let jobseeker = {name,picture:picUrl,resume:resumeURL,phone,address,description}
+    const docId = auth.currentUser?.uid
+    const jobseeker = {name,picture:picUrl,resume:resumeURL,phone,address,description}
 
-    let jobseekerRef = doc(db,'users',docId!)
+    const jobseekerRef = doc(db,'users',docId!)
     try{
    await setDoc(jobseekerRef,jobseeker,{merge:true})
    console.log('succesfull job save');
@@ -110,9 +88,12 @@ const uploadResume = ()=>{
   uploadTask.on('state_changed', 
     (snapshot) => {
      
-      
+      console.log(snapshot);
+
     }, 
     (error) => {
+      console.log(error);
+
      
     }, 
     () => {
@@ -129,14 +110,13 @@ const uploadResume = ()=>{
 
 
 const makeimageName = ()=>{
-  let imageName = pic?.name.split('.')
-  let lastName = imageName!?.length - 1
-  let newName = `${auth.currentUser?.uid}.${lastName}` 
+  const imageName = pic?.name.split('.')
+  const lastName = imageName!?.length - 1
+  const newName = `${auth.currentUser?.uid}.${lastName}` 
   return newName
 }
     return(
         <>
-          <h1>job seeker info</h1>
 
 
           <div className="max-w-sm mx-auto">
@@ -149,7 +129,7 @@ const makeimageName = ()=>{
       Uload Picture
     </label>
 <input type="file"  onChange={(e)=>{
-        let file = e.target.files 
+        const file = e.target.files 
         if(file?.length){
             setPic(file[0])
         }
@@ -165,7 +145,7 @@ const makeimageName = ()=>{
       Upload CV
     </label>
 <input type="file"  onChange={(e)=>{
-        let file = e.target.files 
+        const file = e.target.files 
         if(file?.length){
             setResume(file[0])
         }

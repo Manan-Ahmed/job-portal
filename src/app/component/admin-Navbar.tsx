@@ -1,9 +1,13 @@
+
+
+
+"use client"
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { auth } from "../firebase/firebaseConfig";
-
-export default function AdminNavbar() {
+import style from "./job-navbar.module.css"
+export default function JobSeekerNavbar() {
   const route = useRouter();
 
   const logOut = async () => {
@@ -12,11 +16,14 @@ export default function AdminNavbar() {
     });
   };
 
+
+  
+
   return (
 
     <>
-  <div  >
- <div className="navbar bg-base-100 "  style={{backgroundColor: 'white',border: '1px solid black'}}>
+  <div  className={style.navbar}>
+ <div className="navbar bg-base-100 " >
         <div className="navbar-start">
             <div className="dropdown">
                 <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -35,27 +42,31 @@ export default function AdminNavbar() {
                 </div>
                 <ul
                     tabIndex={0}
-                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                    <li><Link href={"/admin/alljobs"}>All Jobs</Link></li>
-                    <li><Link href={"/admin/allusers"}>all users</Link></li>
-                    <li><Link href={"/admin/allapplications"}>all Applications </Link></li>
+                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 ">
+                    <li><Link href={"/admin/alljobs"}> All Jobs</Link></li>
+               
+                                <li><Link href={"/admin/allusers"}>all users</Link></li>
+                               <li><Link href={"/admin/allapplications"}>all Applications</Link></li>
                 </ul>
             </div>
             <a className="text-xl">Jobs.com</a>
         </div>
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
-                <li><Link href={"/admin/alljobs"}> All Jobs</Link></li>
+            <li><Link href={"/admin/alljobs"}> All Jobs</Link></li>
                
-                <li><Link href={"/admin/allusers"}>all users</Link></li>
-                <li><Link href={"/admin/allapplications"}>all Applications</Link></li>
+                                <li><Link href={"/admin/allusers"}>all users</Link></li>
+                            <li><Link href={"/admin/allapplications"}>all Applications</Link></li>
 
             </ul>
         </div>
         <div className="navbar-end">
-            <button className="btn" onClick={logOut}>Logout</button>
+          <div className="mr-4">
+            <button  onClick={logOut} style={{color: '#2557a7'}}>logout</button>
         </div>
-    </div>
+
+        </div>
+        </div>
     </div>
 
     </>

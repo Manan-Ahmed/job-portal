@@ -1,28 +1,25 @@
 "use client"
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { app, auth, db } from "../firebase/firebaseConfig"
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore"
-// import { useRouter } from "next/router"
+import {  db } from "../firebase/firebaseConfig"
+import {  doc, updateDoc } from "firebase/firestore"
+
+type CompanyInfoType = {
+  name: string; // Adjust as per the actual structure of companyinfo
+};
 
 type AdminJobCardType = {
-    companyinfo:any,jobTitle:string,jobType:string,jobDescription:string,
+    companyinfo:CompanyInfoType,jobTitle:string,jobType:string,jobDescription:string,
     hold?: boolean,deleted?:boolean,
     docId:string,address:string,skills:string,salaryRange:string,companyuid?:string,applied:boolean
 }
 
 
 export default function AdminJobCard(
-{companyinfo,jobTitle,jobType,jobDescription,docId,address,skills,salaryRange,applied,hold,deleted}:AdminJobCardType
+{companyinfo,jobTitle,jobType,jobDescription,docId,address,skills,salaryRange,hold,deleted}:AdminJobCardType
 ){
-const route = useRouter()
-const goToApply = ()=>{
-    route.push(`/jobseeker/${docId}`)
-}
 
     const changePublishStatus = ()=>{
-        let docRef = doc(db,"jobs",docId)
+        const docRef = doc(db,"jobs",docId)
         console.log(docId);
         
         if(hold){
@@ -34,7 +31,7 @@ const goToApply = ()=>{
 
     
     const changeDeleteStatus = ()=>{
-        let docRef = doc(db,"jobs",docId)
+        const docRef = doc(db,"jobs",docId)
         if(deleted){
             updateDoc(docRef,{deleted: false})
         }else{
@@ -43,7 +40,6 @@ const goToApply = ()=>{
     }
     return(
         <>
-        {/* <div className="md:flex flex-row"> */}
         <div className="p-4 md:w-1/2" >
         <div  className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
          
@@ -89,7 +85,6 @@ const goToApply = ()=>{
 
                 
               </span>
-              {/* </div> */}
             </div>
           </div>
         </div>

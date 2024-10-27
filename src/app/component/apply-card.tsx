@@ -9,6 +9,7 @@ type CompanyInfoType = {
   name: string; // Adjust as per the actual structure of companyinfo
 };
 
+
 type CompanyJobCardType = {
     companyinfo:CompanyInfoType,jobTitle:string,jobType:string,jobDescription:string,
     docId:string,address:string,skills:string,salaryRange:string
@@ -34,9 +35,6 @@ const route = useRouter()
       
   }  
   }
-
-  console.log('info',companyinfo);
-  
     return(
         <>
         <div className="p-4 md:w-1/3" >

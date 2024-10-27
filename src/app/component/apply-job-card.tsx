@@ -1,19 +1,18 @@
 "use client"
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-// import { useRouter } from "next/router"
+type CompanyInfoType = {
+  name: string; // Adjust as per the actual structure of companyinfo
+};
 
 type CompanyJobCardType = {
-    companyinfo:any,jobTitle:string,jobType:string,jobDescription:string,
-    docId:string,address:string,skills:string,salaryRange:string
+    companyinfo:string,jobTitle:string,jobType:string,jobDescription:string,
+    docId:string,address:string,skills:string,salaryRange:string,
 }
 
 
 export default function ApplyJobCard(
-    {jobTitle,jobType,jobDescription,docId,address,skills,salaryRange}:CompanyJobCardType
+    {companyinfo,jobTitle,jobType,jobDescription,address,skills,salaryRange}:CompanyJobCardType
 ){
-const route = useRouter()
    
     return(
         <>
@@ -21,7 +20,7 @@ const route = useRouter()
         <div  className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
          
           <div className="p-6" >
-            {/* <h3 className="card-title">Company Name:{companyinfo.name} </h3> */}
+            <h3 className="card-title">Company Name:{companyinfo} </h3>
             <h2 className="card-title m-2">Job Tittle: {jobTitle}
             </h2>
             <h2 className="card-title title-font text-lg font-medium text-gray-900 mb-3">
@@ -42,23 +41,7 @@ const route = useRouter()
             <div className="flex items-center flex-wrap ">
              
 
-              {/* <div>
-              <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
-               
-               
-                   <button className="btn btn-primary" onClick={editpage} >
-                   Edit
-                    
-                   </button>
-              </span>
-              <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-              <button className="btn btn-primary" >
-               Delete
-                </button>
-
-                
-              </span>
-              </div> */}
+           
             </div>
           </div>
         </div>

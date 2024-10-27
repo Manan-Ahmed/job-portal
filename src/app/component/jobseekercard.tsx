@@ -1,34 +1,78 @@
 "use client"
 
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { app, auth, db } from "../firebase/firebaseConfig"
-import { addDoc, collection } from "firebase/firestore"
-// import { useRouter } from "next/router"
+import {  auth, db } from "../firebase/firebaseConfig"
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore"
 import style from "./job-navbar.module.css"
+import { useEffect, useState } from "react"
+
+type CompanyInfoType = {
+  name: string; // Adjust as per the actual structure of companyinfo
+};
 
 type jobCardType = {
-    companyinfo:any,jobTitle:string,jobType:string,jobDescription:string,
+    companyinfo:CompanyInfoType,jobTitle:string,jobType:string,jobDescription:string,
     docId:string,address:string,skills:string,salaryRange:string,companyuid:string,applied:boolean
 }
 
 
 export default function JobCard(
-    {companyinfo,jobTitle,jobType,jobDescription,docId,address,skills,salaryRange,companyuid,applied}:jobCardType
+    {companyinfo,jobTitle,jobType,jobDescription,docId,address,skills,salaryRange,companyuid}:jobCardType
 ){
+console.log('uid',companyuid,'jobdocid',docId,'currentuser',auth.currentUser?.uid);
+
+const [isSaved,setIsSaved] = useState(false)  
+const [isApplied,setIsApplied] = useState(false)  
+
+
+useEffect(()=>{
+const checkIfFavorite = async()=>{
+  try{
+    const favoritejob = await favoritejobFetch()
+    if(favoritejob){
+       setIsSaved(true)
+    }
+  }catch(e){
+        console.log(e)
+  }
+}
+checkIfFavorite()
+},[])
+
+
+
+useEffect(()=>{
+  const checkapplyjobs = async()=>{
+    try{
+      const applyjobs = await appliedjobFetch()
+      
+      if(applyjobs){
+        setIsApplied(true)
+      }
+    }catch(e){
+      console.log(e);
+      
+    }
+  }
+  checkapplyjobs()
+},[])
+
+
+
+
 const route = useRouter()
 const goToApply = ()=>{
     route.push(`/jobseeker/${docId}`)
 }
 
     const favoritejob = async()=>{
-        let favoriteObj = {
+        const favoriteObj = {
           jobdocid: docId,
           companyUid: companyuid,
           jobseekerid: auth.currentUser?.uid
         }
         
-        let favoriteRef = collection(db,'favorites')
+        const favoriteRef = collection(db,'favorites')
           
         try{
           await addDoc(favoriteRef,favoriteObj)
@@ -39,9 +83,36 @@ const goToApply = ()=>{
           
         }
       }
+
+
+const favoritejobFetch = async()=>{
+ const q =  query(collection(db, "favorites"),
+  where("jobseekerid","==",auth.currentUser?.uid),
+  where('jobdocid','==',docId),
+  where("companyUid",'==',companyuid))
+                       const querySnapshot = await getDocs(q)
+                         const jobs = querySnapshot.docs.map((job)=> job.data())
+                         
+                        return jobs.length > 0 ? jobs[0] : null
+                   
+}
+
+
+const appliedjobFetch = async()=>{    
+
+const q = query(collection(db,'applications'), 
+where('jobseekeruid','==',auth.currentUser?.uid),where('jobdocid','==',docId))
+const querySnapshot = await getDocs(q)
+
+console.log('applied job',querySnapshot.docs);
+const jobs = querySnapshot.docs.map((job)=> job.data())
+return jobs.length > 0 ? jobs[0] : null
+ 
+
+}
+
     return(
         <>
-        {/* <div className="md:flex flex-row"> */}
         <div className="p-4 md:w-1/2" >
         <div  className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
          
@@ -71,21 +142,20 @@ const goToApply = ()=>{
               <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
                
                
-                   <button className={style.btn} onClick={goToApply} >
+                   <button className={style.btn} onClick={goToApply} disabled={isApplied} >
                   {
-                    applied ? "applied" : 'Apply now'
+                    isApplied ? "applied" : 'Apply now'
                   } 
                     
                    </button>
               </span>
               <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-              <button className={style.btn} onClick={favoritejob} >
-               Favorite
+              <button className={style.btn} onClick={favoritejob} disabled={isSaved} >
+               {isSaved ? 'Saved':'favorite'}
                 </button>
 
                 
               </span>
-              {/* </div> */}
             </div>
           </div>
         </div>

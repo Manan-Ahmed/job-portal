@@ -1,7 +1,7 @@
 "use client"
 
 import CompanyJobCard from "@/app/component/companyjobcard"
-import CompanyJob from "@/app/component/companyjobcard"
+import Loading from "@/app/component/loading"
 import { useAuthContext } from "@/app/context/authcontext"
 import { auth, db } from "@/app/firebase/firebaseConfig"
 import { collection, doc, DocumentData, getDoc, onSnapshot, query, where } from "firebase/firestore"
@@ -11,36 +11,43 @@ import { useEffect, useState } from "react"
 export default function AllJobs(){
     const [companyjob,setCompanyJob] = useState<DocumentData[]>([])
 const {user} = useAuthContext()!
+const [loading,setLoading] = useState(true)
+
     useEffect(()=>{
         if(user){
             fetchjob()
+            setLoading(false)
+
+        }else{
+            setLoading(false)
 
         }
+
+       
     },[user])
 
     const fetchjob = ()=>{
-        let currentUser = auth.currentUser?.uid
-        let jobsRef = collection(db,"jobs")
+        const currentUser = auth.currentUser?.uid
+        const jobsRef = collection(db,"jobs")
 
-        let condition = where('uid','==',currentUser)
+        const condition = where('uid','==',currentUser)
 
-        let q = query(jobsRef,condition)
+        const q = query(jobsRef,condition)
 
-     let unsub =  onSnapshot(q,async (docSnapShot)=>{
+       onSnapshot(q,async (docSnapShot)=>{
               console.log(docSnapShot);
-              let alljobs = docSnapShot.docs.map(async(job)=>{
+              const alljobs = docSnapShot.docs.map(async(job)=>{
 
-                let  jobdata = job.data()
-                let  jobuid = job.data().uid
+                const  jobdata = job.data()
+                const  jobuid = job.data().uid
 
 
-                      let docRef = doc(db,"users",jobuid)
+                      const docRef = doc(db,"users",jobuid)
 
-                     let jobCreaterinfo =  await  getDoc(docRef)
+                     const jobCreaterinfo =  await  getDoc(docRef)
 
-                     console.log('company data',jobCreaterinfo.data());
 
-                     let obj = {
+                     const obj = {
                         ...jobdata,
                         companyinfo: jobCreaterinfo.data(),
                         docid: job.id
@@ -49,7 +56,7 @@ const {user} = useAuthContext()!
                      
                    return obj
      })
-              let resolveallpromise = await Promise.all(alljobs)
+              const resolveallpromise = await Promise.all(alljobs)
               setCompanyJob(resolveallpromise)
         })
 
@@ -60,13 +67,13 @@ const {user} = useAuthContext()!
 
     return(
         <>
-           <h1>all jobs</h1>
 
            {
+            loading ? <Loading/> :
             companyjob && companyjob.map((
         {jobTitle,jobType,address,docid,jobDescription,companyinfo,skills,salaryRange})=>(
                    
-                <CompanyJobCard  key={docid} address={address} skills={skills} salaryRange={salaryRange} companyinfo={companyinfo.name} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription} docId={docid} />
+                <CompanyJobCard  key={docid} address={address} skills={skills} salaryRange={salaryRange} companyinfo={companyinfo} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription} docId={docid} />
         ))
            }
         </>

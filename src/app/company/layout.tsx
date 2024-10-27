@@ -1,8 +1,7 @@
 "use client"
 import CompanyProtectedRoutes from "@/HOC/company-protected-Route"
-import { Children, ReactNode } from "react"
+import {  ReactNode } from "react"
 import CompanyNavbar from "../component/company-Navbar"
-import ComapnyNavbar from "../component/company-Navbar"
 
 CompanyProtectedRoutes
 

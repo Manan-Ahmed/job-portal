@@ -15,12 +15,11 @@ export default function CreateJob(){
 
 
     const createJob = async()=>{
-        let currentUser = auth.currentUser?.uid
-        let jobObj = {jobTitle,jobType,skills,jobDescription,address,uid:currentUser,salaryRange,qualification}
-        let collectionRef = collection(db,"jobs")
+        const currentUser = auth.currentUser?.uid
+        const jobObj = {jobTitle,jobType,skills,jobDescription,address,uid:currentUser,salaryRange,qualification}
+        const collectionRef = collection(db,"jobs")
 try{
-     let job = await addDoc(collectionRef,jobObj)
-       console.log('job save successful',jobObj);
+    await addDoc(collectionRef,jobObj)
        
 }catch(e){
     console.log('job not save',e);
@@ -50,20 +49,7 @@ try{
     />
   </div>
 
-  {/* <div className="mb-3">
-    <label
-      htmlFor="password"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-    >
-    </label>
-    <input
-      type="text"
-      value={jobType} onChange={(e)=>{setJobType(e.target.value)}}
-            id="Description"
-      placeholder="job Type"
-      className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-    />
-  </div> */}
+
 
 <div className="mb-2">
     <label
@@ -75,7 +61,6 @@ try{
       <select
                 className="select select-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 value={jobType}
-                // defaultValue={"Job Type"}
                 onChange={(e) => { setJobType(e.target.value) }}
             >
                 <option disabled>
@@ -103,21 +88,7 @@ try{
     />
   </div>
 
-  {/* <div className="mb-3">
-    <label
-      htmlFor="password"
-      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-    >
-    </label>
-    <input
-      type="text"
-      value={jobDescription} onChange={(e)=>{setJobDescription(e.target.value)}}
-
-            id="Description"
-      placeholder="job Description"
-      className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-    />
-  </div> */}
+ 
 
   <div className="mb-3">
     <label

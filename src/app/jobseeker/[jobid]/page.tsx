@@ -19,25 +19,25 @@ const route = useRouter()
            fetchData()
     },[])
     const fetchData = async()=>{
-        let jobRef = doc(db,'jobs',jobid)
+        const jobRef = doc(db,'jobs',jobid)
 
-        let jobSnapShot = await getDoc(jobRef)
+        const jobSnapShot = await getDoc(jobRef)
        
-         let job = jobSnapShot.data()
+         const job = jobSnapShot.data()
         setCompanyUid(job?.uid)
         
       }
     
 
       const subApplication = async()=>{
-        let obj = {
+        const obj = {
             comanyid: companyUid,
             jobdocid: jobid,
             jobseekeruid: auth.currentUser?.uid,
             coverLetter
         }
 
-        let docRef = collection(db,'applications')
+        const docRef = collection(db,'applications')
         try{
           await  addDoc(docRef,obj)
           console.log('application successfully');
@@ -52,7 +52,6 @@ const route = useRouter()
         }
     return(
         <>
-           <h1>Applied Job</h1>
 
                
   <div className="text-center mt-7">

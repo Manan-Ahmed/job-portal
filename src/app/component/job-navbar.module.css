@@ -21,3 +21,13 @@ border-radius: 5px;
 .span{
     border-right-color: #e4e2e0;
 }
+
+
+.link:hover{
+    border-bottom-color: #2557a7;
+
+}
+.link:active{
+    border-bottom-color: #2557a7;
+
+}

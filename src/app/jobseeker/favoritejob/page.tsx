@@ -1,6 +1,7 @@
 "use client"
 
 import FavoriteJobCard from "@/app/component/favoritejobcard"
+import Loading from "@/app/component/loading"
 import { useAuthContext } from "@/app/context/authcontext"
 import { auth, db } from "@/app/firebase/firebaseConfig"
 import { collection, doc, DocumentData, getDoc, onSnapshot, query, where } from "firebase/firestore"
@@ -10,41 +11,45 @@ export default function FavoriteJob(){
 
     const [applyjob,setApplyJob] = useState<DocumentData[]>([])
     const {user} = useAuthContext()!
-    let currentUser = auth.currentUser?.uid
+    const [loading,setLoading] = useState(true)
+
+    const currentUser = auth.currentUser?.uid
 
         useEffect(()=>{
             if(currentUser){
-                fetchjob(currentUser)
+                setLoading(false)
+                fetchjob()
     
+            }else{
+                setLoading(false)
             }
         },[user])
     
-        const fetchjob = (uid:string)=>{
-            let jobsRef = collection(db,"applications")
+        const fetchjob = ()=>{
+            const jobsRef = collection(db,"applications")
     
-            let condition = where('jobseekeruid','==',currentUser)
+            const condition = where('jobseekeruid','==',currentUser)
     
-            let q = query(jobsRef,condition)
+            const q = query(jobsRef,condition)
     
-         let unsub =  onSnapshot(q,async (docSnapShot)=>{
-                  console.log(docSnapShot);
-                  let alljobs = docSnapShot.docs.map(async(job)=>{
+         onSnapshot(q,async (docSnapShot)=>{
+                  const alljobs = docSnapShot.docs.map(async(job)=>{
     
-                    let jobid = job.data().jobdocid
-                    let uid = job.data().comanyid
+                    const jobid = job.data().jobdocid
+                    const uid = job.data().comanyid
                      
-                    let compRef = doc(db,"users",uid)
-                    let createjob =   await getDoc(compRef) 
+                    const compRef = doc(db,"users",uid)
+                    const createjob =   await getDoc(compRef) 
                     
-                    let comapnyinfo= createjob.data()
+                    const comapnyinfo= createjob.data()
                     
 
-                    let docRef = doc(db,"jobs",jobid)
-                   let jobs =   await getDoc(docRef)    
-                          
-                   console.log(jobs.id);
+                    const docRef = doc(db,"jobs",jobid)
+                   const jobs =   await getDoc(docRef)    
+
+        
                    
-                        let obj = {
+                        const obj = {
                             ...jobs.data(),
                            comapnyinfo,
                             jobid
@@ -56,7 +61,7 @@ export default function FavoriteJob(){
                          
                      
          })
-                  let resolveallpromise = await Promise.all(alljobs)
+                  const resolveallpromise = await Promise.all(alljobs)
                   setApplyJob(resolveallpromise)
             })
     
@@ -64,13 +69,14 @@ export default function FavoriteJob(){
         }
     return(
         <>
-           <h1>Favorite Job</h1>
 
            {
-            applyjob && applyjob.map(({jobTitle,jobType,jobDescription,address,skills,jobid,salaryRange,companyinfo},i)=>(
+            loading ? <Loading/>
+             :
+            applyjob && applyjob.map(({jobTitle,jobType,jobDescription,address,skills,jobid,salaryRange})=>(
                  <FavoriteJobCard
-                    key={jobid} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription} 
-                    docId={jobid} address={address} skills={skills} salaryRange={salaryRange}    />
+                    key={jobid} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription}
+                    docId={jobid} address={address} skills={skills} salaryRange={salaryRange}     />
             ))
            }
         </>

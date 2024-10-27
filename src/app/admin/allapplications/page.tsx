@@ -3,7 +3,7 @@
 export default function AllApplications(){
     return(
         <>
-         <h1>Applications</h1>
+         <h1 className="text-center">No Application Recieved</h1>
         </>
     )
 }
