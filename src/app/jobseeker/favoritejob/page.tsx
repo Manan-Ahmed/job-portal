@@ -1,84 +1,79 @@
-"use client"
+"use client";
 
-import FavoriteJobCard from "@/app/component/favoritejobcard"
-import Loading from "@/app/component/loading"
-import { useAuthContext } from "@/app/context/authcontext"
-import { auth, db } from "@/app/firebase/firebaseConfig"
-import { collection, doc, DocumentData, getDoc, onSnapshot, query, where } from "firebase/firestore"
-import { useEffect, useState } from "react"
+import FavoriteJobCard from "@/app/component/favoritejobcard";
+import Loading from "@/app/component/loading";
+import { auth, db } from "@/app/firebase/firebaseConfig";
+import { collection, doc, DocumentData, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
-export default function FavoriteJob(){
+export default function FavoriteJob() {
+    const [applyJob, setApplyJob] = useState<DocumentData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const currentUser = auth.currentUser?.uid;
 
-    const [applyjob,setApplyJob] = useState<DocumentData[]>([])
-    const {user} = useAuthContext()!
-    const [loading,setLoading] = useState(true)
+    useEffect(() => {
+        const fetchJobs = async () => {
+            if (currentUser) {
+                setLoading(true);
+                const jobsRef = collection(db, "applications");
+                const condition = where("jobseekeruid", "==", currentUser);
+                const q = query(jobsRef, condition);
 
-    const currentUser = auth.currentUser?.uid
+                const unsubscribe = onSnapshot(q, async (docSnapShot) => {
+                    const allJobsPromises = docSnapShot.docs.map(async (job) => {
+                        const jobId = job.data().jobdocid;
+                        const uid = job.data().companyid;
 
-        useEffect(()=>{
-            if(currentUser){
-                setLoading(false)
-                fetchjob()
-    
-            }else{
-                setLoading(false)
+                        const companyRef = doc(db, "users", uid);
+                        const companyDoc = await getDoc(companyRef);
+                        const companyInfo = companyDoc.data();
+
+                        const jobRef = doc(db, "jobs", jobId);
+                        const jobDoc = await getDoc(jobRef);
+
+                        return {
+                            ...jobDoc.data(),
+                            companyInfo,
+                            jobid: jobId,
+                        };
+                    });
+
+                    const resolvedJobs = await Promise.all(allJobsPromises);
+                    setApplyJob(resolvedJobs);
+                    setLoading(false);
+                });
+
+                return () => unsubscribe(); // Cleanup subscription
+            } else {
+                setLoading(false);
             }
-        },[user])
-    
-        const fetchjob = ()=>{
-            const jobsRef = collection(db,"applications")
-    
-            const condition = where('jobseekeruid','==',currentUser)
-    
-            const q = query(jobsRef,condition)
-    
-         onSnapshot(q,async (docSnapShot)=>{
-                  const alljobs = docSnapShot.docs.map(async(job)=>{
-    
-                    const jobid = job.data().jobdocid
-                    const uid = job.data().comanyid
-                     
-                    const compRef = doc(db,"users",uid)
-                    const createjob =   await getDoc(compRef) 
-                    
-                    const comapnyinfo= createjob.data()
-                    
+        };
 
-                    const docRef = doc(db,"jobs",jobid)
-                   const jobs =   await getDoc(docRef)    
+        fetchJobs();
+    },); // Updated dependency array
 
-        
-                   
-                        const obj = {
-                            ...jobs.data(),
-                           comapnyinfo,
-                            jobid
-                        }
-                        console.log(obj);
-                        
-    return obj
-                     
-                         
-                     
-         })
-                  const resolveallpromise = await Promise.all(alljobs)
-                  setApplyJob(resolveallpromise)
-            })
-    
-    
-        }
-    return(
+    return (
         <>
-
-           {
-            loading ? <Loading/>
-             :
-            applyjob && applyjob.map(({jobTitle,jobType,jobDescription,address,skills,jobid,salaryRange})=>(
-                 <FavoriteJobCard
-                    key={jobid} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription}
-                    docId={jobid} address={address} skills={skills} salaryRange={salaryRange}     />
-            ))
-           }
+            {loading ? (
+                <Loading />
+            ) : (
+                applyJob.length > 0 ? (
+                    applyJob.map(({ jobTitle, jobType, jobDescription, address, skills, jobid, salaryRange }) => (
+                        <FavoriteJobCard
+                            key={jobid}
+                            jobTitle={jobTitle}
+                            jobType={jobType}
+                            jobDescription={jobDescription}
+                            docId={jobid}
+                            address={address}
+                            skills={skills}
+                            salaryRange={salaryRange}
+                        />
+                    ))
+                ) : (
+                    <h2>No favorite jobs found.</h2>
+                )
+            )}
         </>
-    )
+    );
 }

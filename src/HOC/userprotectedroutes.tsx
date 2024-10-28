@@ -22,7 +22,7 @@ const route = useRouter()
               route.push('/admin')
             }
            }
-    },[user])
+    },[user,route])
 
 
     return(

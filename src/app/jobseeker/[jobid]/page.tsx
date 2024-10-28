@@ -17,7 +17,7 @@ const route = useRouter()
 
     useEffect(()=>{
            fetchData()
-    },[])
+    },)
     const fetchData = async()=>{
         const jobRef = doc(db,'jobs',jobid)
 

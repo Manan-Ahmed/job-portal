@@ -22,7 +22,7 @@ const route = useRouter()
             route.push('/company/companyinfo')
          }
         
- },[])
+ },[user,route])
 
 
     return(

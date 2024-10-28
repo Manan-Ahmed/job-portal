@@ -19,32 +19,37 @@ export default function EditCard({ params: { id } }: EditCardProps) {
     const [address, setAddress] = useState<string>('');
     const [salaryRange, setSalaryRange] = useState<string>('');
     const [qualification, setQualification] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     const route = useRouter();
 
     useEffect(() => {
-        fetchJob();
-    }, []); // Fetch job again if id changes
+        const fetchJob = async () => {
+            const docRef = doc(db, "jobs", id);
+            try {
+                const jobData = await getDoc(docRef);
+                const job = jobData.data();
 
-    const fetchJob = async () => {
-        const docRef = doc(db, "jobs", id);
-        try {
-            const jobData = await getDoc(docRef);
-            const job = jobData.data();
-
-            if (job) {
-                setJobType(job.jobType || '');
-                setJobTitle(job.jobTitle || '');
-                setSkills(job.skills || '');
-                setJobDescription(job.jobDescription || '');
-                setAddress(job.address || '');
-                setSalaryRange(job.salaryRange || '');
-                setQualification(job.qualification || '');
+                if (job) {
+                    setJobType(job.jobType || '');
+                    setJobTitle(job.jobTitle || '');
+                    setSkills(job.skills || '');
+                    setJobDescription(job.jobDescription || '');
+                    setAddress(job.address || '');
+                    setSalaryRange(job.salaryRange || '');
+                    setQualification(job.qualification || '');
+                }
+            } catch (e) {
+                console.error(e);
+                setError('Failed to fetch job data.');
+            } finally {
+                setLoading(false);
             }
-        } catch (e) {
-            console.error(e);
-        }
-    };
+        };
+
+        fetchJob();
+    }, ); // Fetch job again if id changes
 
     const editJob = async () => {
         const docRef = doc(db, "jobs", id);
@@ -61,8 +66,17 @@ export default function EditCard({ params: { id } }: EditCardProps) {
             route.push('/company/all-jobs');
         } catch (e) {
             console.error('Job not updated', e);
+            setError('Failed to update job.');
         }
     };
+
+    if (loading) {
+        return <p>Loading...</p>; // Optional loading indicator
+    }
+
+    if (error) {
+        return <p className="text-red-500">{error}</p>; // Display error message if any
+    }
 
     return (
         <>

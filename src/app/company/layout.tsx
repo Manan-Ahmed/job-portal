@@ -1,20 +1,18 @@
-"use client"
-import CompanyProtectedRoutes from "@/HOC/company-protected-Route"
-import {  ReactNode } from "react"
-import CompanyNavbar from "../component/company-Navbar"
 
-CompanyProtectedRoutes
+"use client";
+import CompanyProtectedRoutes from "@/HOC/company-protected-Route";
+import { ReactNode } from "react";
+import CompanyNavbar from "../component/company-Navbar";
 
-type CompanyLayoutType ={
-    children: ReactNode
-}
+type CompanyLayoutType = {
+    children: ReactNode;
+};
 
-export default function CompanyLayout({children}:CompanyLayoutType){
-    return(
+export default function CompanyLayout({ children }: CompanyLayoutType) {
+    return (
         <CompanyProtectedRoutes>
-                <CompanyNavbar/>
-
+            <CompanyNavbar />
             {children}
         </CompanyProtectedRoutes>
-    )
+    );
 }

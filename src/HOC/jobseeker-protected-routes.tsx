@@ -23,7 +23,7 @@ const route = useRouter()
             route.push('/jobseeker/jobseekerinfo')
          }
         
- },[user])
+ },[user,route])
 
 
     return(
