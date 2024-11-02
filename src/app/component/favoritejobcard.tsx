@@ -19,6 +19,7 @@ export default function FavoriteJobCard(
         <div  className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
          
           <div className="p-6" >
+
             <h2 className="card-title m-2">Job Tittle: {jobTitle}
             </h2>
             <h2 className="card-title title-font text-lg font-medium text-gray-900 mb-3">

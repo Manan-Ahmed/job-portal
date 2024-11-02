@@ -3,6 +3,7 @@
 import { auth, db, storage } from "@/app/firebase/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CompanyInfo() {
@@ -11,6 +12,7 @@ export default function CompanyInfo() {
     const [phone, setPhone] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [description, setDescription] = useState<string>('');
+const route = useRouter()
 
     const uploadLogo = () => {
         if (!logo) return; // Ensure logo is not null
@@ -50,6 +52,7 @@ export default function CompanyInfo() {
 
         try {
             await setDoc(userRef, company, { merge: true });
+            route.push('/company')
         } catch (e) {
             console.error(e);
         }
@@ -67,6 +70,9 @@ export default function CompanyInfo() {
 
     return (
         <>
+
+
+        <h1 className="text-center font-bold text-4xl m-4"> CompanyInfo</h1>
             <div className="max-w-sm mx-auto">
                 <div className="mb-3">
                     <input

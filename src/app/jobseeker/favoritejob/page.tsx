@@ -15,14 +15,25 @@ export default function FavoriteJob() {
         const fetchJobs = async () => {
             if (currentUser) {
                 setLoading(true);
-                const jobsRef = collection(db, "applications");
-                const condition = where("jobseekeruid", "==", currentUser);
+                const jobsRef = collection(db, "favorites");
+                const condition = where("jobseekerid", "==", currentUser);
                 const q = query(jobsRef, condition);
 
                 const unsubscribe = onSnapshot(q, async (docSnapShot) => {
+                    console.log('docsnap',docSnapShot.docs);
+                    
                     const allJobsPromises = docSnapShot.docs.map(async (job) => {
                         const jobId = job.data().jobdocid;
-                        const uid = job.data().companyid;
+                        const uid = job.data().companyUid;
+console.log('favorite',job.data());
+
+
+
+// const applyRef = doc(db, "jobs", jobid);
+// const jobs = await getDoc(applyRef);
+
+// const compRef = doc(db, "users", applydata.comanyid);
+// const company = await getDoc(compRef);
 
                         const companyRef = doc(db, "users", uid);
                         const companyDoc = await getDoc(companyRef);
@@ -30,6 +41,8 @@ export default function FavoriteJob() {
 
                         const jobRef = doc(db, "jobs", jobId);
                         const jobDoc = await getDoc(jobRef);
+console.log('jobdoc',companyInfo);
+
 
                         return {
                             ...jobDoc.data(),
@@ -50,7 +63,7 @@ export default function FavoriteJob() {
         };
 
         fetchJobs();
-    },); // Updated dependency array
+    },[]); // Updated dependency array
 
     return (
         <>
@@ -71,7 +84,8 @@ export default function FavoriteJob() {
                         />
                     ))
                 ) : (
-                    <h2>No favorite jobs found.</h2>
+                    <h2 className="text-center text-3xl font-bold " 
+                    style={{position: 'relative',top: '180px'}}>No favorite jobs found.</h2>
                 )
             )}
         </>

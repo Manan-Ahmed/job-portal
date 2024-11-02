@@ -70,12 +70,14 @@ const [loading,setLoading] = useState(true)
 
            {
             loading ? <Loading/> :
-            companyjob && companyjob.map((
+            companyjob ? companyjob.map((
         {jobTitle,jobType,address,docid,jobDescription,companyinfo,skills,salaryRange})=>(
                    
                 <CompanyJobCard  key={docid} address={address} skills={skills} salaryRange={salaryRange} companyinfo={companyinfo} jobTitle={jobTitle} jobType={jobType} jobDescription={jobDescription} docId={docid} />
         ))
+        : <h1 className="text-center text-3xl font-bold">No Job Post</h1>
            }
+           
         </>
     )
 }

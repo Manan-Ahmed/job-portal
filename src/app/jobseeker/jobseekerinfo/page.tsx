@@ -102,6 +102,10 @@ export default function JobSeekerInfo() {
   };
 
   return (
+<>
+
+    <h1 className="text-center font-bold text-4xl m-4"> JobSeeker Info</h1>
+
     <div className="max-w-sm mx-auto">
       <div className="mb-3">
         <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Picture</label>
@@ -143,5 +147,6 @@ export default function JobSeekerInfo() {
         {loading ? 'Saving...' : 'Save Info'}
       </button>
     </div>
+    </>
   );
 }
